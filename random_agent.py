@@ -4,6 +4,7 @@ import sys
 
 import gym
 from gym import wrappers
+from tabular_q_agent import TabularQAgent
 
 
 class RandomAgent(object):
@@ -16,34 +17,10 @@ class RandomAgent(object):
         return self.action_space.sample()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=None)
-    parser.add_argument('env_id', nargs='?', default='Copy-v0', help='Select the environment to run')
-    args = parser.parse_args()
+    env = gym.make('Copy-v0')
 
-    # Call `undo_logger_setup` if you want to undo Gym's logger setup
-    # and configure things manually. (The default should be fine most
-    # of the time.)
-    gym.undo_logger_setup()
-    logger = logging.getLogger()
-    formatter = logging.Formatter('[%(asctime)s] %(message)s')
-    handler = logging.StreamHandler(sys.stderr)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-
-    # You can set the level to logging.DEBUG or logging.WARN if you
-    # want to change the amount of output.
-    logger.setLevel(logging.INFO)
-
-    env = gym.make(args.env_id)
-
-    # You provide the directory to write to (can be an existing
-    # directory, including one with existing data -- all monitor files
-    # will be namespaced). You can also dump to a tempdir if you'd
-    # like: tempfile.mkdtemp().
-    outdir = '/tmp/random-agent-results'
-    env = wrappers.Monitor(env, directory=outdir, force=True)
     env.seed(0)
-    agent = RandomAgent(env.action_space)
+    #agent = TabularQAgent(ob, env.action_space)
 
     episode_count = 100
     reward = 0
@@ -52,6 +29,9 @@ if __name__ == '__main__':
     for i in range(episode_count):
         ob = env.reset()
         while True:
+            agent = TabularQAgent(ob, env.action_space)
+
+            #agent.learn(env)
             action = agent.act(ob, reward, done)
             ob, reward, done, _ = env.step(action)
             if done:
