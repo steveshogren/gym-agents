@@ -7,6 +7,7 @@ class TabularQAgent(object):
     Agent implementing tabular Q-learning.
     """
 
+
     def __init__(self, observation_space, action_space, **userconfig):
         #if not isinstance(observation_space, discrete.Discrete): raise error.UnsupportedMode('Observation space {} incompatible with {}. (Only supports Discrete observation spaces.)'.format(observation_space, self))
         #if not isinstance(action_space, discrete.Discrete): raise error.UnsupportedMode('Action space {} incompatible with {}. (Only supports Discrete action spaces.)'.format(action_space, self))
