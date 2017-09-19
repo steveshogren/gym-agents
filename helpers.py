@@ -1,13 +1,13 @@
 from gym.spaces import discrete
 
-def tupleSize(t):
-    c = 1
-    for s in  t.spaces:
-        c = c * s.n
-    return c
-
-def tuplePerms(t):
-    ret = ()
-    #for s in  t.spaces:
-    #    c = c * s.n
+def triplePerms(t):
+    ret = []
+    (aes,bes,ces) = t.spaces
+    for a in range(aes.n):
+        for b in range(bes.n):
+            for c in range(ces.n):
+                ret.append([a+1,b+1,c+1])
     return ret
+
+def tupleSize(t):
+    return len(triplePerms(t))

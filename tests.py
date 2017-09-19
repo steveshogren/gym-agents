@@ -15,7 +15,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_tuplePerm(self):
         d = Tuple([Discrete(1), Discrete(2), Discrete(1)])
-        self.assertEqual(h.tuplePerms(d), ([1,1,1], [1,2,1]))
+        self.assertEqual(h.triplePerms(d), [[1,1,1], [1,2,1]])
 
 
 if __name__ == '__main__':
