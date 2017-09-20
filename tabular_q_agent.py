@@ -1,6 +1,8 @@
 #from gym.spaces import Discrete, Tuple
+from collections import defaultdict
 from gym import error
 from gym.spaces import discrete
+import argparse, numpy as np
 
 class TabularQAgent(object):
     """
@@ -31,13 +33,13 @@ class TabularQAgent(object):
         action = np.argmax(self.q[observation.item()]) if np.random.random() > eps else self.action_space.sample()
         return action
 
-    def learn(self, env):
+    def learn(self, env, envStep):
         config = self.config
         obs = env.reset()
         q = self.q
         for t in range(config["n_iter"]):
             action, _ = self.act(obs)
-            obs2, reward, done, _ = env.step(action)
+            obs2, reward, done, _ = envstep(action)
             future = 0.0
             if not done:
                 future = np.max(q[obs2.item()])
