@@ -26,24 +26,29 @@ class TabularQAgent(object):
         self.config.update(userconfig)
         self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
 
-    def act(self, observation, eps=None):
+    def chooseAction(self, observation, eps=None):
         if eps is None:
             eps = self.config["eps"]
         # epsilon greedy.
-        action = np.argmax(self.q[observation.item()]) if np.random.random() > eps else self.action_space.sample()
-        return action
+        return np.argmax(self.q[observation]) if np.random.random() > eps else self.action_space.sample()
 
     def learn(self, env, envStep):
         config = self.config
         obs = env.reset()
         q = self.q
         for t in range(config["n_iter"]):
-            action, _ = self.act(obs)
-            obs2, reward, done, _ = envstep(action)
+            action = self.chooseAction(obs)
+            obs2, reward, done, _ = envStep(action)
             future = 0.0
+
             if not done:
-                future = np.max(q[obs2.item()])
-            q[obs.item()][action] -= \
-                self.config["learning_rate"] * (q[obs.item()][action] - reward - config["discount"] * future)
+                future = np.max(q[obs2])
+
+            # update q
+            q[obs][action] -= \
+                self.config["learning_rate"] * (q[obs][action] - reward - config["discount"] * future)
+
+            if done:
+                obs2 = env.reset()
 
             obs = obs2

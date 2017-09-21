@@ -33,9 +33,9 @@ if __name__ == '__main__':
     actionSize = h.tupleSize(env.action_space)
     #while True:
     agent = TabularQAgent(ob, actionSize)
-    for i in range(episode_count):
+    #for i in range(episode_count):
             # reconvert the Discrete action into a tuple for the AlgorithmicEnv
-        agent.learn(env, lambda action: env.step(perms[action]))
+    agent.learn(env, lambda action: env.step(perms[action]))
         #action = agent.act(ob)
             #ob, reward, done, _ = env.step(action)
             #if done:
