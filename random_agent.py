@@ -17,6 +17,11 @@ class RandomAgent(object):
         # print str(self.action_space)
         return self.action_space.sample()
 
+def getTuple(perms, action):
+    print "looking up:" + str(action)
+    print "found:" + str(perms[action])
+    return perms[action]
+
 if __name__ == '__main__':
     env = gym.make('Copy-v0')
 
@@ -35,7 +40,7 @@ if __name__ == '__main__':
     agent = TabularQAgent(ob, actionSize)
     #for i in range(episode_count):
             # reconvert the Discrete action into a tuple for the AlgorithmicEnv
-    agent.learn(env, lambda action: env.step(perms[action]))
+    agent.learn(env, lambda action: env.step(getTuple(perms, action)))
         #action = agent.act(ob)
             #ob, reward, done, _ = env.step(action)
             #if done:

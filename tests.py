@@ -14,7 +14,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(h.tupleSize(d).n, (10+1) *2*2)
 
     def test_tuplePerm(self):
-        dic = {0:[1,1,1], 1:[1,2,1]}
+        dic = {0:[0,0,0], 1:[0,1,0]}
         d = Tuple([Discrete(1), Discrete(2), Discrete(1)])
         self.assertEqual(h.triplePerms(d), dic)
 

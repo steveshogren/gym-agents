@@ -7,7 +7,7 @@ def triplePerms(t):
     for a in range(aes.n):
         for b in range(bes.n):
             for c in range(ces.n):
-                perms.append([a+1,b+1,c+1])
+                perms.append([a,b,c])
     for (i, perm) in zip(range(len(perms)),perms):
         ret[i] = perm
     return ret
