@@ -17,13 +17,8 @@ class RandomAgent(object):
         # print str(self.action_space)
         return self.action_space.sample()
 
-def getTuple(perms, action):
-    print "looking up:" + str(action)
-    print "found:" + str(perms[action])
-    return perms[action]
-
 if __name__ == '__main__':
-    env = gym.make('Copy-v0')
+    env = gym.make('Reverse-v0')
 
     env.seed(0)
     #agent = TabularQAgent(ob, env.action_space)
@@ -37,10 +32,11 @@ if __name__ == '__main__':
     perms = h.triplePerms(env.action_space)
     actionSize = h.tupleSize(env.action_space)
     #while True:
+
     agent = TabularQAgent(ob, actionSize)
     #for i in range(episode_count):
             # reconvert the Discrete action into a tuple for the AlgorithmicEnv
-    agent.learn(env, lambda action: env.step(getTuple(perms, action)))
+    agent.learn(env, lambda action: env.step(perms[action]))
         #action = agent.act(ob)
             #ob, reward, done, _ = env.step(action)
             #if done:
@@ -50,6 +46,7 @@ if __name__ == '__main__':
             # Video is not recorded every episode, see capped_cubic_video_schedule for details.
 
     # Close the env and write monitor result info to disk
+    print(agent.q)
     env.render()
     env.close()
 

@@ -22,7 +22,7 @@ class TabularQAgent(object):
             "learning_rate" : 0.1,
             "eps": 0.05,            # Epsilon in epsilon greedy policies
             "discount": 0.95,
-            "n_iter": 10000}        # Number of iterations
+            "n_iter": 1000000}        # Number of iterations
         self.config.update(userconfig)
         self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
 
@@ -36,6 +36,7 @@ class TabularQAgent(object):
         config = self.config
         obs = env.reset()
         q = self.q
+        currentSize = 0
         for t in range(config["n_iter"]):
             action = self.chooseAction(obs)
             obs2, reward, done, _ = envStep(action)
@@ -49,6 +50,10 @@ class TabularQAgent(object):
                 self.config["learning_rate"] * (q[obs][action] - reward - config["discount"] * future)
 
             if done:
+                currentSize = currentSize + 1
+                if currentSize % 10000 == 0:
+                    env.render()
+                # either a failure or success, reset the env
                 obs2 = env.reset()
 
             obs = obs2
