@@ -5,9 +5,10 @@ import sys
 import gym
 from gym import wrappers
 from tabular_q_agent import TabularQAgent
+import pickle as pickle
 import helpers as h
 
-
+# gutted to use TabularQAgent instead with the Reverse-v0
 class RandomAgent(object):
     """The world's simplest agent!"""
     def __init__(self, action_space):
@@ -36,7 +37,21 @@ if __name__ == '__main__':
     agent = TabularQAgent(ob, actionSize)
     #for i in range(episode_count):
             # reconvert the Discrete action into a tuple for the AlgorithmicEnv
+
+    output = open('data.pkl', 'rb')
+    data1 = pickle.load(output)
+    output.close()
+    print(data1)
+    if (data1):
+        agent.makeDefaultDict(data1)
+
     agent.learn(env, lambda action: env.step(perms[action]))
+
+    output = open('data.pkl', 'wb')
+    d = dict(agent.q)
+    pickle.dump(d, output)
+    print(d)
+    output.close()
         #action = agent.act(ob)
             #ob, reward, done, _ = env.step(action)
             #if done:
@@ -46,7 +61,6 @@ if __name__ == '__main__':
             # Video is not recorded every episode, see capped_cubic_video_schedule for details.
 
     # Close the env and write monitor result info to disk
-    print(agent.q)
     env.render()
     env.close()
 

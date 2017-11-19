@@ -26,6 +26,9 @@ class TabularQAgent(object):
         self.config.update(userconfig)
         self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
 
+    def makeDefaultDict(self, init):
+        self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"], init)
+
     def chooseAction(self, observation, eps=None):
         if eps is None:
             eps = self.config["eps"]
