@@ -11,16 +11,14 @@ class TabularQAgent(object):
 
 
     def __init__(self, observation_space, action_space, **userconfig):
-        #if not isinstance(observation_space, discrete.Discrete): raise error.UnsupportedMode('Observation space {} incompatible with {}. (Only supports Discrete observation spaces.)'.format(observation_space, self))
-        #if not isinstance(action_space, discrete.Discrete): raise error.UnsupportedMode('Action space {} incompatible with {}. (Only supports Discrete action spaces.)'.format(action_space, self))
         self.observation_space = observation_space
         self.action_space = action_space
         self.action_n = action_space.n
         self.config = {
             "init_mean" : 0.0,      # Initialize Q values with this mean
             "init_std" : 0.0,       # Initialize Q values with this standard deviation
-            "learning_rate" : 0.1,
-            "eps": 0.05,            # Epsilon in epsilon greedy policies
+            "learning_rate" : 1.0,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
+            "eps": 0.05,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
             "discount": 0.95,
             "n_iter": 1000000}        # Number of iterations
         self.config.update(userconfig)
@@ -49,8 +47,8 @@ class TabularQAgent(object):
                 future = np.max(q[obs2])
 
             # update q
-            q[obs][action] -= \
-                self.config["learning_rate"] * (q[obs][action] - reward - config["discount"] * future)
+            q[obs2][action] -= \
+                self.config["learning_rate"] * (q[obs2][action] - reward - config["discount"] * future)
 
             if done:
                 currentSize = currentSize + 1
