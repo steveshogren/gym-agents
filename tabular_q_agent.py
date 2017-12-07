@@ -18,9 +18,9 @@ class TabularQAgent(object):
             "init_mean" : 0.0,      # Initialize Q values with this mean
             "init_std" : 0.0,       # Initialize Q values with this standard deviation
             "learning_rate" : 1.0,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
-            "eps": 0.05,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
+            "eps": 0.75,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
             "discount": 0.95,
-            "n_iter": 1000000}        # Number of iterations
+            "n_iter": 10000000}        # Number of iterations
         self.config.update(userconfig)
         self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
 
@@ -33,7 +33,7 @@ class TabularQAgent(object):
         # epsilon greedy.
         return np.argmax(self.q[observation]) if np.random.random() > eps else self.action_space.sample()
 
-    def learn(self, env, envStep):
+    def learn(self, env, envStep, saveState):
         config = self.config
         obs = env.reset()
         q = self.q
@@ -53,6 +53,8 @@ class TabularQAgent(object):
             if done:
                 currentSize = currentSize + 1
                 if currentSize % 10000 == 0:
+                    saveState(q)
+                    print (str(currentSize) + "/" + str(config["n_iter"]))
                     env.render()
                 # either a failure or success, reset the env
                 obs2 = env.reset()

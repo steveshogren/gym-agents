@@ -18,6 +18,14 @@ class RandomAgent(object):
         # print str(self.action_space)
         return self.action_space.sample()
 
+def saveDict(defaultdic):
+    output = open('data.pkl', 'wb')
+    d = dict(defaultdic)
+    pickle.dump(d, output)
+    output.close()
+    print(d)
+
+
 if __name__ == '__main__':
     env = gym.make('Reverse-v0')
 
@@ -45,12 +53,10 @@ if __name__ == '__main__':
     if (data1):
         agent.makeDefaultDict(data1)
 
-    agent.learn(env, lambda action: env.step(perms[action]))
+    agent.learn(env, lambda action: env.step(perms[action]),
+                lambda dic: saveDict(dic))
 
-    output = open('data.pkl', 'wb')
-    d = dict(agent.q)
-    pickle.dump(d, output)
-    print(d)
+    saveDict(agent.q)
     output.close()
         #action = agent.act(ob)
             #ob, reward, done, _ = env.step(action)
