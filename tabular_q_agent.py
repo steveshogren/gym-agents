@@ -21,7 +21,7 @@ class TabularQAgent(object):
             "learning_rate" : 0.9,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
             "eps": 0.50,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
             "discount": 0.90,
-            "n_iter": 1000000}        # Number of iterations
+            "n_iter": 10000}        # Number of iterations
         self.config.update(userconfig)
         self.makeDefaultDict()
         #self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
@@ -59,15 +59,15 @@ class TabularQAgent(object):
             action = self.chooseAction(obs)
             ## obs needs to take into account the current position on the tape
             ## and the current letter at that position!!!!!
-            obs2, reward, done, _ = envStep(action)
+            obs2, reward, done, _ = envStep(env, action)
             future = 0.0
 
             if not done:
                 future = np.max(q[obs2])
 
             # update q
-            q[obs2][action] -= \
-                self.config["learning_rate"] * (q[obs2][action] - reward - config["discount"] * future)
+            q[obs][action] -= \
+                self.config["learning_rate"] * (q[obs][action] - reward - config["discount"] * future)
 
             if done:
                 currentSize = currentSize + 1
