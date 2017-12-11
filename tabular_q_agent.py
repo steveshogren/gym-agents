@@ -19,9 +19,9 @@ class TabularQAgent(object):
             "init_mean" : 0.0,      # Initialize Q values with this mean
             "init_std" : 0.0,       # Initialize Q values with this standard deviation
             "learning_rate" : 0.9,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
-            "eps": 0.50,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
+            "eps": 0.90,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
             "discount": 0.90,
-            "n_iter": 10000}        # Number of iterations
+            "n_iter": 1000000}        # Number of iterations
         self.config.update(userconfig)
         self.makeDefaultDict()
         #self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
@@ -31,7 +31,7 @@ class TabularQAgent(object):
         output = open('data.pkl', 'rb')
         data1 = pickle.load(output)
         output.close()
-        print(data1)
+        #print(data1)
         if (data1):
             self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"], data1)
         else:
@@ -42,7 +42,9 @@ class TabularQAgent(object):
         d = dict(self.q)
         pickle.dump(d, output)
         output.close()
-        print(d)
+
+    def printState(self):
+        print(self.q)
 
     def chooseAction(self, observation, eps=None):
         if eps is None:
