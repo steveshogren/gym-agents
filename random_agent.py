@@ -17,7 +17,8 @@ def step(env, action):
     #print("read_head_position: " + str(env.env.read_head_position))
     #print("obs (letter under cursor): " + str(obs))
     # print("last_reward: " + str(env.env.last_reward))
-    return (obs, env.env.input_width,env.env.read_head_position),reward,done,_
+    #print (obs, env.env.input_width-env.env.read_head_position, env.env.input_width-env.env.write_head_position)
+    return (obs, env.env.input_width-env.env.read_head_position, env.env.input_width-env.env.write_head_position),reward,done,_
 
 if __name__ == '__main__':
     env = gym.make('Reverse-v0')

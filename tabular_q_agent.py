@@ -19,7 +19,7 @@ class TabularQAgent(object):
             "init_mean" : 0.0,      # Initialize Q values with this mean
             "init_std" : 0.0,       # Initialize Q values with this standard deviation
             "learning_rate" : 0.9,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
-            "eps": 0.90,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
+            "eps": 0.95,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
             "discount": 0.90,
             "n_iter": 1000000}        # Number of iterations
         self.config.update(userconfig)
@@ -32,6 +32,7 @@ class TabularQAgent(object):
         data1 = pickle.load(output)
         output.close()
         #print(data1)
+        data1 = False
         if (data1):
             self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"], data1)
         else:
@@ -68,8 +69,8 @@ class TabularQAgent(object):
                 future = np.max(q[obs2])
 
             # update q
-            q[obs][action] -= \
-                self.config["learning_rate"] * (q[obs][action] - reward - config["discount"] * future)
+            q[obs][action] = \
+               ((1-self.config["learning_rate"]) * q[obs][action]) + self.config["learning_rate"] * (reward + (config["discount"] * future))
 
             if done:
                 currentSize = currentSize + 1
