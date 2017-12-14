@@ -30,9 +30,9 @@ class TabularQAgent(object):
         data1 = pickle.load(output)
         output.close()
         # print(data1)
-        #data1 = False
+        # data1 = False
         if (data1):
-            print("Starting with: " + str(data1))
+            #print("Starting with: " + str(data1))
             self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"], data1)
         else:
             self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
@@ -52,25 +52,27 @@ class TabularQAgent(object):
         # epsilon greedy.
         return np.argmax(self.q[observation]) if np.random.random() > eps else self.action_space.sample()
 
-    def learn(self, env, envStep):
+    def learn(self, env, envStep, convertObsToTuple):
         config = self.config
-        obs = env.reset()
+        obsTuple = convertObsToTuple(env, env.reset())
         q = self.q
         currentSize = 0
         highestReward = 0
         for t in range(config["n_iter"]):
-            action = self.chooseAction(obs)
-            ## obs needs to take into account the current position on the tape
+            action = self.chooseAction(obsTuple)
+            ## obsTuple needs to take into account the current position on the tape
             ## and the current letter at that position!!!!!
-            obs2, reward, done, _ = envStep(env, action)
+            obsTuple2, reward, done, _ = envStep(env, action)
             future = 0.0
 
             if not done:
-                future = np.max(q[obs2])
+                future = np.max(q[obsTuple2])
 
             # update q
-            q[obs][action] = \
-               ((1-self.config["learning_rate"]) * q[obs][action]) + self.config["learning_rate"] * (reward + (config["discount"] * future))
+            q[obsTuple][action] = \
+               ((1-self.config["learning_rate"]) * q[obsTuple][action]) + self.config["learning_rate"] * (reward + (config["discount"] * future))
+
+            #env.render()
 
             if done:
                 hreward = env.env.episode_total_reward
@@ -83,6 +85,6 @@ class TabularQAgent(object):
                     print (str(currentSize) + "/" + str(config["n_iter"]))
                     env.render()
                 # either a failure or success, reset the env
-                obs2 = env.reset()
+                obsTuple2 = convertObsToTuple(env, env.reset())
 
-            obs = obs2
+            obsTuple = obsTuple2

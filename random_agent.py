@@ -9,6 +9,13 @@ import helpers as h
 
 # gutted to use TabularQAgent instead with the Reverse-v0
 
+def convertObsToTuple(env, obs):
+    currentLetter = obs
+    currentPosition = env.env.input_width-env.env.read_head_position
+    countWritten = env.env.input_width-env.env.write_head_position
+    # print (currentLetter, currentPosition, countWritten)
+    return (currentLetter, currentPosition, countWritten)
+
 def step(env, action):
     obs,reward,done,_ = env.step(perms[action])
 
@@ -18,7 +25,7 @@ def step(env, action):
     #print("obs (letter under cursor): " + str(obs))
     # print("last_reward: " + str(env.env.last_reward))
     #print (obs, env.env.input_width-env.env.read_head_position, env.env.input_width-env.env.write_head_position)
-    return (obs, env.env.input_width-env.env.read_head_position, env.env.input_width-env.env.write_head_position),reward,done,_
+    return convertObsToTuple(env,obs),reward,done,_
 
 if __name__ == '__main__':
     env = gym.make('Reverse-v0')
@@ -47,7 +54,7 @@ if __name__ == '__main__':
 
     agent = TabularQAgent(ob, actionSize)
 
-    agent.learn(env, step)
+    agent.learn(env, step, convertObsToTuple)
 
     env.render()
     agent.printState()
