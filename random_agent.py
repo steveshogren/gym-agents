@@ -56,8 +56,7 @@ if __name__ == '__main__':
 
     agent.learn(env, step, convertObsToTuple)
 
-    env.render()
-    agent.printState()
+    #env.render()
 
     env.close()
 

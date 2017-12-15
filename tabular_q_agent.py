@@ -18,10 +18,10 @@ class TabularQAgent(object):
         self.config = {
             "init_mean" : 0.0,      # Initialize Q values with this mean
             "init_std" : 0.0,       # Initialize Q values with this standard deviation
-            "learning_rate" : 1.0,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
-            "eps": 0.98,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
-            "discount": 0.50,
-            "n_iter": 1000000}        # Number of iterations
+            "learning_rate" : 0.1,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
+            "eps": 0.01,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
+            "discount": 0.10,
+            "n_iter": 100000000}        # Number of iterations
         self.config.update(userconfig)
         self.makeDefaultDict()
 
@@ -32,7 +32,7 @@ class TabularQAgent(object):
         # print(data1)
         # data1 = False
         if (data1):
-            #print("Starting with: " + str(data1))
+            print("Starting with: " + str(data1))
             self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"], data1)
         else:
             self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"])
@@ -58,6 +58,7 @@ class TabularQAgent(object):
         q = self.q
         currentSize = 0
         highestReward = 0
+        positiveTotals = 0
         for t in range(config["n_iter"]):
             action = self.chooseAction(obsTuple)
             ## obsTuple needs to take into account the current position on the tape
@@ -68,23 +69,24 @@ class TabularQAgent(object):
             if not done:
                 future = np.max(q[obsTuple2])
 
-            # update q
             q[obsTuple][action] = \
                ((1-self.config["learning_rate"]) * q[obsTuple][action]) + self.config["learning_rate"] * (reward + (config["discount"] * future))
 
-            #env.render()
-
             if done:
+                if env.env.episode_total_reward > 0:
+                    positiveTotals = positiveTotals + 1
+
                 hreward = env.env.episode_total_reward
                 if (hreward > highestReward):
                     highestReward = hreward
                 currentSize = currentSize + 1
-                if currentSize % 10000 == 0 and hreward > 0:
-                    self.saveState()
-                    print("Current highest reward: " + str(highestReward))
+                if currentSize % 100000 == 0 and hreward > 0:
                     print (str(currentSize) + "/" + str(config["n_iter"]))
                     env.render()
                 # either a failure or success, reset the env
                 obsTuple2 = convertObsToTuple(env, env.reset())
 
             obsTuple = obsTuple2
+        self.saveState()
+        print("Current highest reward: " + str(highestReward))
+        print("Total positive: " + str(positiveTotals))
