@@ -12,9 +12,9 @@ import helpers as h
 def convertObsToTuple(env, obs):
     currentLetter = obs
     currentPosition = env.env.input_width-env.env.read_head_position
-    countWritten = env.env.input_width-env.env.write_head_position
+    anyWritten = env.env.write_head_position==0
     # print (currentLetter, currentPosition, countWritten)
-    return (currentLetter, currentPosition, countWritten)
+    return (currentLetter, currentPosition, anyWritten)
 
 def step(env, action):
     obs,reward,done,_ = env.step(perms[action])
