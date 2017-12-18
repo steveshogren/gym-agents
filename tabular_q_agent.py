@@ -54,7 +54,8 @@ class TabularQAgent(object):
 
     def learn(self, env, envStep, convertObsToTuple):
         config = self.config
-        obsTuple = convertObsToTuple(env, env.reset())
+        currentLetter = env.reset()
+        obsTuple = convertObsToTuple(env)
         q = self.q
         currentSize = 0
         highestReward = 0
@@ -63,7 +64,7 @@ class TabularQAgent(object):
             action = self.chooseAction(obsTuple)
             ## obsTuple needs to take into account the current position on the tape
             ## and the current letter at that position!!!!!
-            obsTuple2, reward, done, _ = envStep(env, action)
+            currentLetter, obsTuple2, reward, done, _ = envStep(env, action)
             future = 0.0
 
             if not done:
@@ -80,7 +81,7 @@ class TabularQAgent(object):
                 if (hreward > highestReward):
                     highestReward = hreward
                 currentSize = currentSize + 1
-                if currentSize % 10000 == 0 and hreward > 0:
+                if currentSize % 1000 == 0 and hreward > 6:
                     print("Current highest reward: " + str(highestReward))
                     print (str(currentSize) + "/" + str(config["n_iter"]))
                     env.render()
