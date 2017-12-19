@@ -21,7 +21,7 @@ class TabularQAgent(object):
             "learning_rate" : 0.1,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
             "eps": 0.01,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
             "discount": 0.10,
-            "n_iter": 1000000}        # Number of iterations
+            "n_iter": 100}        # Number of iterations
         self.config.update(userconfig)
         self.makeDefaultDict()
 
@@ -30,7 +30,7 @@ class TabularQAgent(object):
         data1 = pickle.load(output)
         output.close()
         # print(data1)
-        # data1 = False
+        data1 = False
         if (data1):
             print("Starting with: " + str(data1))
             self.q = defaultdict(lambda: self.config["init_std"] * np.random.randn(self.action_n) + self.config["init_mean"], data1)
@@ -64,7 +64,7 @@ class TabularQAgent(object):
             action = self.chooseAction(obsTuple)
             ## obsTuple needs to take into account the current position on the tape
             ## and the current letter at that position!!!!!
-            currentLetter, obsTuple2, reward, done, _ = envStep(env, action)
+            currentLetter, obsTuple2, reward, done, _ = envStep(env, action, currentLetter)
             future = 0.0
 
             if not done:
@@ -81,12 +81,13 @@ class TabularQAgent(object):
                 if (hreward > highestReward):
                     highestReward = hreward
                 currentSize = currentSize + 1
-                if currentSize % 1000 == 0 and hreward > 6:
+                if currentSize % 1000 == 0 and hreward > 0:
                     print("Current highest reward: " + str(highestReward))
                     print (str(currentSize) + "/" + str(config["n_iter"]))
                     env.render()
                 # either a failure or success, reset the env
-                obsTuple2 = convertObsToTuple(env, env.reset())
+                currentLetter = env.reset()
+                obsTuple2 = convertObsToTuple(env)
 
             obsTuple = obsTuple2
         self.saveState()

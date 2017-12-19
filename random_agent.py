@@ -9,15 +9,19 @@ import helpers as h
 
 # gutted to use TabularQAgent instead with the Reverse-v0
 
-def convertObsToTuple(env, obs):
+def convertObsToTuple(env):
     # currentPosition = env.env.input_width-env.env.read_head_position
     atEnd =(env.env.input_width-env.env.read_head_position)==1
     anyWritten = env.env.write_head_position==0
     # print (currentLetter, currentPosition, countWritten)
     return (atEnd, anyWritten)
 
-def step(env, action):
-    obs,reward,done,_ = env.step(perms[action])
+def step(env, action, currentLetter):
+    move,write,_ = perms[action]
+    oldTuple = [move,write,_]
+
+    newTuple = [move,write,currentLetter-1]
+    obs,reward,done,_ = env.step(newTuple)
 
     currentLetter = obs
     #print("input_width: " + str(env.env.input_width))
