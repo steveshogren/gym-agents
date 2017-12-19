@@ -9,28 +9,16 @@ import helpers as h
 
 # gutted to use TabularQAgent instead with the Reverse-v0
 
-def convertObsToTuple(env):
-    # currentPosition = env.env.input_width-env.env.read_head_position
+def convertObsToTuple(env, obs):
+    currentLetter = obs
     atEnd =(env.env.input_width-env.env.read_head_position)==1
     anyWritten = env.env.write_head_position==0
     # print (currentLetter, currentPosition, countWritten)
-    return (atEnd, anyWritten)
+    return (currentLetter, atEnd, anyWritten)
 
-def step(env, action, currentLetter):
-    move,write,_ = perms[action]
-    oldTuple = [move,write,_]
-
-    newTuple = [move,write,currentLetter-1]
-    obs,reward,done,_ = env.step(newTuple)
-
-    currentLetter = obs
-    #print("input_width: " + str(env.env.input_width))
-    #print("last_action: " + str(env.env.last_action))
-    #print("read_head_position: " + str(env.env.read_head_position))
-    #print("obs (letter under cursor): " + str(obs))
-    # print("last_reward: " + str(env.env.last_reward))
-    #print (obs, env.env.input_width-env.env.read_head_position, env.env.input_width-env.env.write_head_position)
-    return currentLetter,convertObsToTuple(env),reward,done,_
+def step(env, action):
+    obs,reward,done,_ = env.step(perms[action])
+    return convertObsToTuple(env, obs),reward,done,_
 
 if __name__ == '__main__':
     env = gym.make('Reverse-v0')
