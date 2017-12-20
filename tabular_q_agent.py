@@ -18,9 +18,9 @@ class TabularQAgent(object):
         self.config = {
             "init_mean" : 0.0,      # Initialize Q values with this mean
             "init_std" : 0.0,       # Initialize Q values with this standard deviation
-            "learning_rate" : 0.1,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
-            "eps": 0.01,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
-            "discount": 0.10,
+            "learning_rate" : 0.5,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
+            "eps": 0.001,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
+            "discount": 0.30,
             "n_iter": 1000000}        # Number of iterations
         self.config.update(userconfig)
         self.makeDefaultDict()
@@ -80,7 +80,7 @@ class TabularQAgent(object):
                 if (hreward > highestReward):
                     highestReward = hreward
                 currentSize = currentSize + 1
-                if currentSize % 1000 == 0 and hreward > 0:
+                if currentSize % 1000 == 0 and hreward > 5:
                     print("Current highest reward: " + str(highestReward))
                     print (str(currentSize) + "/" + str(config["n_iter"]))
                     env.render()
