@@ -18,9 +18,9 @@ class TabularQAgent(object):
         self.config = {
             "init_mean" : 0.0,      # Initialize Q values with this mean
             "init_std" : 0.0,       # Initialize Q values with this standard deviation
-            "learning_rate" : 0.5,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
+            "learning_rate" : 0.9,  # learning rate 1.0 - 0.0  where 1.0 is for perfectly deterministic scenarios
             "eps": 0.001,            # Epsilon in epsilon greedy policies - 1.0 infinitely long negative traits
-            "discount": 0.30,
+            "discount": 0.001,
             "n_iter": 1000000}        # Number of iterations
         self.config.update(userconfig)
         self.makeDefaultDict()
@@ -59,6 +59,7 @@ class TabularQAgent(object):
         currentSize = 0
         highestReward = 0
         positiveTotals = 0
+        allTotals = 0
         for t in range(config["n_iter"]):
             action = self.chooseAction(obsTuple)
             ## obsTuple needs to take into account the current position on the tape
@@ -73,6 +74,7 @@ class TabularQAgent(object):
                ((1-self.config["learning_rate"]) * q[obsTuple][action]) + self.config["learning_rate"] * (reward + (config["discount"] * future))
 
             if done:
+                allTotals = allTotals + 1
                 if env.env.episode_total_reward > 0:
                     positiveTotals = positiveTotals + 1
 
@@ -90,4 +92,4 @@ class TabularQAgent(object):
             obsTuple = obsTuple2
         self.saveState()
         print("Current highest reward: " + str(highestReward))
-        print("Total positive: " + str(positiveTotals))
+        print("Total positive: " + str(positiveTotals) + "/" + str(allTotals))
